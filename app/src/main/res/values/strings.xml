@@ -31,4 +31,20 @@
     <string name="service_status_inactive">Assistant Status: Idle</string>
     <string name="btn_toggle_service_on">Enable Assistant</string>
     <string name="btn_toggle_service_off">Disable Assistant</string>
+    
+    <!-- Accessibility and Status Strings -->
+    <string name="accessibility_service_desc">WhatsApp AI Auto-Responder Service. Detects incoming chat windows to type and send responses automatically.</string>
+    <string name="label_notification_access">Notification Access</string>
+    <string name="label_accessibility_service">Accessibility Service</string>
+    <string name="label_webhook_status">Webhook Connection</string>
+    <string name="status_enabled">Enabled</string>
+    <string name="status_disabled">Disabled</string>
+    <string name="status_connected">Connected</string>
+    <string name="status_not_connected">Not Configured / Idle</string>
+    <string name="btn_view_logs">View Service Logs</string>
+    <string name="btn_grant_permissions">Grant Missing Access</string>
+    <string name="dialog_noti_access_title">Notification Access Required</string>
+    <string name="dialog_noti_access_desc">Please enable Notification Access for WhatsApp AI Assistant in the settings screen that opens next to detect incoming WhatsApp notifications.</string>
+    <string name="dialog_access_title">Accessibility Service Required</string>
+    <string name="dialog_access_desc">Please enable the WhatsApp AI Assistant Accessibility Service in the list that opens next. This allows the assistant to paste auto-replies and automatically hit send inside WhatsApp.</string>
 </resources>

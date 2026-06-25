@@ -5,6 +5,11 @@
     <!-- Internet permissions for test request -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    
+    <!-- Service and notification permissions for Android 12/13/14/15 -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <application
         android:name=".WhatsAppAssistantApp"
@@ -43,6 +48,43 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".ui.home.MainActivity" />
         </activity>
+
+        <!-- Service & Webhook Logs Screen Activity -->
+        <activity
+            android:name=".ui.logs.LogsActivity"
+            android:exported="false"
+            android:label="Logs"
+            android:parentActivityName=".ui.home.MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ui.home.MainActivity" />
+        </activity>
+
+        <!-- Notification Listener Service -->
+        <service
+            android:name=".WhatsAppNotificationListenerService"
+            android:exported="true"
+            android:label="WhatsApp AI Notification Listener"
+            android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE"
+            android:foregroundServiceType="dataSync">
+            <intent-filter>
+                <action android:name="android.service.notification.NotificationListenerService" />
+            </intent-filter>
+        </service>
+
+        <!-- Accessibility Interaction Service -->
+        <service
+            android:name=".WhatsAppAccessibilityService"
+            android:exported="true"
+            android:label="WhatsApp AI Auto-Responder Service"
+            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
+            <intent-filter>
+                <action android:name="android.view.accessibility.AccessibilityService" />
+            </intent-filter>
+            <meta-data
+                android:name="android.view.accessibility.AccessibilityService"
+                android:resource="@xml/accessibility_service_config" />
+        </service>
 
     </application>
 

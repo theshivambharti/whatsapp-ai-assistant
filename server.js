@@ -48,7 +48,10 @@ app.post("/api/test-request", async (req, res) => {
 
 // Route to download the compiled Android APK
 app.get("/download-apk", (req, res) => {
-  const apkPath = path.join(__dirname, "app/build/outputs/apk/debug/app-debug.apk");
+  let apkPath = path.join(__dirname, "app/build/outputs/apk/debug/app-debug.apk");
+  if (!fs.existsSync(apkPath)) {
+    apkPath = path.join(__dirname, ".build-outputs/app-debug.apk");
+  }
   if (fs.existsSync(apkPath)) {
     res.setHeader("Content-Type", "application/vnd.android.package-archive");
     res.setHeader("Content-Disposition", "attachment; filename=whatsapp-ai-assistant.apk");
