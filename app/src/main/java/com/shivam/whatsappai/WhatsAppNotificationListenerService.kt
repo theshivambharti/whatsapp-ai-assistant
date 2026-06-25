@@ -33,6 +33,8 @@ class WhatsAppNotificationListenerService : NotificationListenerService() {
         private const val NOTIFICATION_ID = 1001
         var isRunning = false
             private set
+        var isConnectedState = false
+            private set
     }
 
     override fun onCreate() {
@@ -45,6 +47,7 @@ class WhatsAppNotificationListenerService : NotificationListenerService() {
     override fun onListenerConnected() {
         super.onListenerConnected()
         isConnected = true
+        isConnectedState = true
         val logger = (applicationContext as? WhatsAppAssistantApp)?.logDbHelper
         logger?.addLog("INCOMING", "Notification Listener Connected")
     }
@@ -52,6 +55,7 @@ class WhatsAppNotificationListenerService : NotificationListenerService() {
     override fun onListenerDisconnected() {
         super.onListenerDisconnected()
         isConnected = false
+        isConnectedState = false
         val logger = (applicationContext as? WhatsAppAssistantApp)?.logDbHelper
         logger?.addLog("INCOMING", "Notification Listener Disconnected")
     }
@@ -59,6 +63,7 @@ class WhatsAppNotificationListenerService : NotificationListenerService() {
     override fun onDestroy() {
         super.onDestroy()
         isRunning = false
+        isConnectedState = false
         val logger = (applicationContext as? WhatsAppAssistantApp)?.logDbHelper
         logger?.addLog("INCOMING", "Notification Listener Destroyed")
     }
@@ -158,12 +163,18 @@ class WhatsAppNotificationListenerService : NotificationListenerService() {
         sdf.timeZone = TimeZone.getTimeZone("UTC")
         val timestamp = sdf.format(Date(sbn.postTime))
 
+        // Record diagnostics
+        DiagnosticsManager.lastNotification = "From: $senderName, Msg: $messageText, Time: $timestamp"
+        DiagnosticsManager.lastWhatsAppPackage = sbn.packageName
+
         logger.addLog("INCOMING", "Incoming message from '$senderName' ($phone): '$messageText'")
 
         // Retrieve config
         val serverUrl = app.dataStoreManager.serverUrlFlow.first()
         if (serverUrl.isBlank()) {
-            logger.addLog("ERROR", "Webhook dispatch aborted: Server URL is empty.")
+            val errMsg = "Webhook dispatch aborted: Server URL is empty."
+            logger.addLog("ERROR", errMsg)
+            DiagnosticsManager.lastError = errMsg
             return
         }
 
@@ -186,6 +197,9 @@ class WhatsAppNotificationListenerService : NotificationListenerService() {
         // Webhook invocation with automatic exponential backoff retry (up to 3 times)
         serviceScope.launch {
             try {
+                val reqMsg = "URL: $serverUrl, Body: $senderName says $messageText"
+                DiagnosticsManager.lastWebhookRequest = reqMsg
+                
                 val response = retryWithBackoff(times = 3, initialDelay = 1500) {
                     logger.addLog("WEBHOOK_REQ", "POST to $serverUrl")
                     RetrofitClient.apiService.sendWebhook(serverUrl, headers, webhookRequest)
@@ -194,6 +208,7 @@ class WhatsAppNotificationListenerService : NotificationListenerService() {
                 if (response.isSuccessful) {
                     val body = response.body()
                     val replyText = body?.reply
+                    DiagnosticsManager.lastWebhookResponse = "Code: ${response.code()}, Reply: $replyText"
                     if (!replyText.isNullOrBlank()) {
                         // Pass reply to AccessibilityService layer and open conversation
                         WhatsAppReplyManager.addPendingReply(
@@ -207,10 +222,16 @@ class WhatsAppNotificationListenerService : NotificationListenerService() {
                     }
                 } else {
                     val errBody = response.errorBody()?.string() ?: "Unknown error"
-                    logger.addLog("ERROR", "Webhook failed with code ${response.code()}: $errBody")
+                    val errMsg = "Webhook failed with code ${response.code()}: $errBody"
+                    logger.addLog("ERROR", errMsg)
+                    DiagnosticsManager.lastError = errMsg
+                    DiagnosticsManager.lastWebhookResponse = "Code: ${response.code()}, Error: $errBody"
                 }
             } catch (e: Exception) {
-                logger.addLog("ERROR", "Webhook dispatch failed after retries: ${e.message}")
+                val errMsg = "Webhook dispatch failed after retries: ${e.message}"
+                logger.addLog("ERROR", errMsg)
+                DiagnosticsManager.lastError = errMsg
+                DiagnosticsManager.lastWebhookResponse = "Failed: ${e.message}"
             }
         }
     }

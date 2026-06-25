@@ -57,6 +57,11 @@ class MainActivity : AppCompatActivity() {
             handleGrantPermissionsClick()
         }
 
+        binding.btnDiagnostics.setOnClickListener {
+            val intent = Intent(this, com.shivam.whatsappai.ui.diagnostics.DiagnosticsActivity::class.java)
+            startActivity(intent)
+        }
+
         binding.btnViewLogs.setOnClickListener {
             val intent = Intent(this, LogsActivity::class.java)
             startActivity(intent)

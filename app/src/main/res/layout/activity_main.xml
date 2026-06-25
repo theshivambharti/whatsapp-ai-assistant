@@ -220,6 +220,17 @@
                         android:backgroundTint="@color/primary"
                         android:textColor="@android:color/white" />
 
+                    <!-- Run Setup Wizard & Diagnostics -->
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_diagnostics"
+                        style="@style/Widget.Material3.Button.TonalButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:text="Permissions Wizard &amp; Diagnostics"
+                        android:layout_marginBottom="10dp"
+                        app:cornerRadius="12dp"
+                        android:textColor="@color/primary" />
+
                     <!-- View Logs Button -->
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btn_view_logs"
