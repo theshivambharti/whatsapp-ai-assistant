@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- WhatsApp Green palette for Material 3 -->
+    <color name="primary">#00a884</color>
+    <color name="primary_variant">#075e54</color>
+    <color name="on_primary">#ffffff</color>
+    
+    <color name="secondary">#128c7e</color>
+    <color name="on_secondary">#ffffff</color>
+    
+    <color name="background">#f0f2f5</color>
+    <color name="on_background">#111b21</color>
+    
+    <color name="surface">#ffffff</color>
+    <color name="on_surface">#111b21</color>
+    
+    <color name="surface_variant">#eaebeb</color>
+    <color name="on_surface_variant">#4a5568</color>
+    
+    <color name="error">#ba1a1a</color>
+    <color name="on_error">#ffffff</color>
+    
+    <color name="whatsapp_green">#25d366</color>
+    <color name="whatsapp_dark">#0b141a</color>
+    <color name="whatsapp_bg_light">#efeae2</color>
+    <color name="whatsapp_bubble_sent">#d9fdd3</color>
+    <color name="whatsapp_bubble_received">#ffffff</color>
+</resources>

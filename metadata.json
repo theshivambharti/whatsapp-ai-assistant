@@ -1,0 +1,6 @@
+{
+  "name": "WhatsApp AI Assistant",
+  "description": "An automated helper and responder for WhatsApp messages, allowing custom server routing and test requests.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
