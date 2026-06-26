@@ -7,12 +7,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.shivam.whatsappai.WhatsAppAssistantApp
 import com.shivam.whatsappai.data.db.LogEntry
 import com.shivam.whatsappai.databinding.ActivityLogsBinding
 import com.shivam.whatsappai.databinding.ItemLogBinding
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class LogsActivity : AppCompatActivity() {
 
@@ -29,6 +32,36 @@ class LogsActivity : AppCompatActivity() {
         setupRecyclerView()
         setupListeners()
         loadLogs()
+        startLiveLogUpdates()
+    }
+
+    private fun startLiveLogUpdates() {
+        lifecycleScope.launch {
+            while (true) {
+                delay(1500)
+                loadLogsSilently()
+            }
+        }
+    }
+
+    private fun loadLogsSilently() {
+        val app = application as WhatsAppAssistantApp
+        val dbLogs = app.logDbHelper.getAllLogs()
+        
+        // If the number of logs or content has changed, update the UI
+        if (dbLogs.size != logsList.size || (dbLogs.isNotEmpty() && logsList.isNotEmpty() && dbLogs.first().id != logsList.first().id)) {
+            logsList.clear()
+            logsList.addAll(dbLogs)
+            logsAdapter.notifyDataSetChanged()
+
+            if (logsList.isEmpty()) {
+                binding.tvEmptyLogs.visibility = View.VISIBLE
+                binding.rvLogs.visibility = View.GONE
+            } else {
+                binding.tvEmptyLogs.visibility = View.GONE
+                binding.rvLogs.visibility = View.VISIBLE
+            }
+        }
     }
 
     private fun setupToolbar() {

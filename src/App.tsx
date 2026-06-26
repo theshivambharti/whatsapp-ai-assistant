@@ -20,7 +20,7 @@ import {
 export default function App() {
   // Mobile app state (mirrors local DataStore / Settings)
   const [serverUrl, setServerUrl] = useState(() => {
-    return localStorage.getItem("whatsapp_server_url") || "https://example.com/api/response";
+    return localStorage.getItem("whatsapp_server_url") || "https://bot.clickbaaz.com/webhook.php";
   });
   const [headerName, setHeaderName] = useState(() => {
     return localStorage.getItem("whatsapp_header_name") || "Authorization";

@@ -72,6 +72,17 @@
                 android:value="com.shivam.whatsappai.ui.home.MainActivity" />
         </activity>
 
+        <!-- About Screen Activity -->
+        <activity
+            android:name="com.shivam.whatsappai.ui.about.AboutActivity"
+            android:exported="false"
+            android:label="About &amp; Version History"
+            android:parentActivityName="com.shivam.whatsappai.ui.home.MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.shivam.whatsappai.ui.home.MainActivity" />
+        </activity>
+
         <!-- Notification Listener Service -->
         <service
             android:name="com.shivam.whatsappai.WhatsAppNotificationListenerService"

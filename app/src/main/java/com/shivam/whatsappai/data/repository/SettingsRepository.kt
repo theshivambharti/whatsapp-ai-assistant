@@ -12,6 +12,7 @@ class SettingsRepository(private val dataStoreManager: DataStoreManager) {
     val headerName: Flow<String> = dataStoreManager.headerNameFlow
     val headerValue: Flow<String> = dataStoreManager.headerValueFlow
     val serviceActive: Flow<Boolean> = dataStoreManager.serviceActiveFlow
+    val testMode: Flow<Boolean> = dataStoreManager.testModeFlow
 
     suspend fun saveSettings(serverUrl: String, headerName: String, headerValue: String) {
         dataStoreManager.saveSettings(serverUrl, headerName, headerValue)
@@ -19,6 +20,10 @@ class SettingsRepository(private val dataStoreManager: DataStoreManager) {
 
     suspend fun setServiceActive(active: Boolean) {
         dataStoreManager.setServiceActive(active)
+    }
+
+    suspend fun setTestMode(active: Boolean) {
+        dataStoreManager.setTestMode(active)
     }
 
     suspend fun sendTestRequest(): Result<TestResponseData> {

@@ -45,6 +45,8 @@ class DiagnosticsActivity : AppCompatActivity() {
         checkPermissionsAndStatus()
     }
 
+    private var refreshJob: kotlinx.coroutines.Job? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityDiagnosticsBinding.inflate(layoutInflater)
@@ -57,7 +59,34 @@ class DiagnosticsActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        checkPermissionsAndStatus()
+        startPeriodicRefresh()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        refreshJob?.cancel()
+    }
+
+    private fun startPeriodicRefresh() {
+        refreshJob?.cancel()
+        refreshJob = lifecycleScope.launch {
+            val app = application as WhatsAppAssistantApp
+            while (true) {
+                checkPermissionsAndStatus()
+                try {
+                    val isTestMode = app.dataStoreManager.testModeFlow.first()
+                    if (isTestMode) {
+                        binding.cardTestModeStages.visibility = android.view.View.VISIBLE
+                        renderStages()
+                    } else {
+                        binding.cardTestModeStages.visibility = android.view.View.GONE
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+                kotlinx.coroutines.delay(1000)
+            }
+        }
     }
 
     private fun setupToolbar() {
@@ -106,6 +135,10 @@ class DiagnosticsActivity : AppCompatActivity() {
 
         binding.btnRunSelfTest.setOnClickListener {
             runCompleteSelfTest()
+        }
+
+        binding.btnExportDebugLog.setOnClickListener {
+            exportDebugLog()
         }
     }
 
@@ -307,12 +340,18 @@ class DiagnosticsActivity : AppCompatActivity() {
             builder.append("• Battery Optimization: ").append(if (battery) "PASS\n" else "FAIL\n")
             if (!battery) passedAll = false
 
-            // 5. Network
+            // 5. WhatsApp Installed Check
+            val whatsappVersion = DiagnosticsManager.getWhatsAppVersion(this@DiagnosticsActivity)
+            val whatsappInstalled = whatsappVersion != "Not Installed"
+            builder.append("• WhatsApp Installed: ").append(if (whatsappInstalled) "PASS ($whatsappVersion)\n" else "FAIL (Not Installed)\n")
+            if (!whatsappInstalled) passedAll = false
+
+            // 6. Network
             val net = isNetworkConnected()
             builder.append("• Internet Connection: ").append(if (net) "PASS\n" else "FAIL\n")
             if (!net) passedAll = false
 
-            // 6. Webhook
+            // 7. Webhook
             val serverUrl = app.dataStoreManager.serverUrlFlow.first()
             var web = false
             if (serverUrl.isNotBlank() && net) {
@@ -340,6 +379,194 @@ class DiagnosticsActivity : AppCompatActivity() {
                 .show()
 
             checkPermissionsAndStatus()
+        }
+    }
+
+    private fun renderStages() {
+        val container = binding.layoutStagesContainer
+        container.removeAllViews()
+
+        val stages = DiagnosticsManager.stages
+        for (stage in stages) {
+            val itemLayout = android.widget.LinearLayout(this).apply {
+                orientation = android.widget.LinearLayout.VERTICAL
+                layoutParams = android.widget.LinearLayout.LayoutParams(
+                    android.widget.LinearLayout.LayoutParams.MATCH_PARENT,
+                    android.widget.LinearLayout.LayoutParams.WRAP_CONTENT
+                )
+                setPadding(0, 12, 0, 12)
+            }
+
+            // Top Row: Status, Name, and Duration
+            val topRow = android.widget.LinearLayout(this).apply {
+                orientation = android.widget.LinearLayout.HORIZONTAL
+                layoutParams = android.widget.LinearLayout.LayoutParams(
+                    android.widget.LinearLayout.LayoutParams.MATCH_PARENT,
+                    android.widget.LinearLayout.LayoutParams.WRAP_CONTENT
+                )
+            }
+
+            val statusIndicator = android.widget.TextView(this).apply {
+                text = when (stage.status) {
+                    "SUCCESS" -> "🟢 "
+                    "FAILURE" -> "🔴 "
+                    else -> "🟡 "
+                }
+                textSize = 14f
+            }
+
+            val nameView = android.widget.TextView(this).apply {
+                text = "Stage ${stage.number}: ${stage.name}"
+                textSize = 14f
+                setTypeface(null, android.graphics.Typeface.BOLD)
+                setTextColor(ContextCompat.getColor(this@DiagnosticsActivity, R.color.on_surface))
+                layoutParams = android.widget.LinearLayout.LayoutParams(0, android.widget.LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
+            }
+
+            val durationView = android.widget.TextView(this).apply {
+                text = if (stage.durationMs >= 0) "${stage.durationMs}ms" else ""
+                textSize = 12f
+                setTextColor(ContextCompat.getColor(this@DiagnosticsActivity, R.color.on_surface_variant))
+                gravity = android.view.Gravity.END
+            }
+
+            topRow.addView(statusIndicator)
+            topRow.addView(nameView)
+            topRow.addView(durationView)
+            itemLayout.addView(topRow)
+
+            // Second Row: Timestamp and Details
+            if (stage.status != "WAITING") {
+                val detailsLayout = android.widget.LinearLayout(this).apply {
+                    orientation = android.widget.LinearLayout.VERTICAL
+                    setPadding(24, 4, 0, 0)
+                }
+
+                if (stage.timestamp.isNotEmpty()) {
+                    val timeView = android.widget.TextView(this).apply {
+                        text = "Timestamp: ${stage.timestamp}"
+                        textSize = 11f
+                        setTextColor(ContextCompat.getColor(this@DiagnosticsActivity, R.color.on_surface_variant))
+                    }
+                    detailsLayout.addView(timeView)
+                }
+
+                val detailsView = android.widget.TextView(this).apply {
+                    text = stage.details
+                    textSize = 12f
+                    setTextColor(
+                        if (stage.status == "FAILURE")
+                            ContextCompat.getColor(this@DiagnosticsActivity, R.color.error)
+                        else
+                            ContextCompat.getColor(this@DiagnosticsActivity, R.color.on_surface_variant)
+                    )
+                }
+                detailsLayout.addView(detailsView)
+
+                // Exception Stack Trace
+                if (stage.exception != null) {
+                    val excView = android.widget.TextView(this).apply {
+                        text = "Stack Trace:\n${stage.exception}"
+                        textSize = 10f
+                        typeface = android.graphics.Typeface.MONOSPACE
+                        setTextColor(ContextCompat.getColor(this@DiagnosticsActivity, R.color.error))
+                        setPadding(8, 8, 8, 8)
+                        setBackgroundColor(0x11FF0000) // Translucent light red background
+                    }
+                    detailsLayout.addView(excView)
+                }
+
+                itemLayout.addView(detailsLayout)
+            }
+
+            // Separator/Divider
+            if (stage.number < 11) {
+                val divider = android.view.View(this).apply {
+                    layoutParams = android.widget.LinearLayout.LayoutParams(
+                        android.widget.LinearLayout.LayoutParams.MATCH_PARENT,
+                        1
+                    ).apply {
+                        setMargins(0, 8, 0, 0)
+                    }
+                    setBackgroundColor(ContextCompat.getColor(this@DiagnosticsActivity, R.color.surface_variant))
+                }
+                itemLayout.addView(divider)
+            }
+
+            container.addView(itemLayout)
+        }
+    }
+
+    private fun exportDebugLog() {
+        lifecycleScope.launch {
+            val app = application as WhatsAppAssistantApp
+            val logDbHelper = app.logDbHelper
+            val report = StringBuilder()
+
+            report.append("==================================================\n")
+            report.append("WHATSAPP AI ASSISTANT - SYSTEM DEBUG REPORT\n")
+            report.append("Generated on: ").append(java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss", java.util.Locale.getDefault()).format(java.util.Date())).append("\n")
+            report.append("==================================================\n\n")
+
+            // Part 1: System Info
+            report.append("[SYSTEM ENVIRONMENT]\n")
+            report.append("• Notification Access: ").append(if (isNotificationAccessEnabled()) "ENABLED" else "DISABLED").append("\n")
+            report.append("• Accessibility Service: ").append(if (isAccessibilityServiceEnabled()) "ENABLED" else "DISABLED").append("\n")
+            report.append("• WhatsApp Version: ").append(DiagnosticsManager.getWhatsAppVersion(this@DiagnosticsActivity)).append("\n")
+
+            val powerManager = getSystemService(Context.POWER_SERVICE) as PowerManager
+            val batteryIgnoring = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                powerManager.isIgnoringBatteryOptimizations(packageName)
+            } else {
+                true
+            }
+            report.append("• Battery Optimization Ignored: ").append(if (batteryIgnoring) "YES" else "NO").append("\n")
+            report.append("• Background Service Active: ").append(if (WhatsAppNotificationListenerService.isRunning) "YES" else "NO").append("\n")
+            report.append("• Network Connected: ").append(if (isNetworkConnected()) "YES" else "NO").append("\n")
+
+            val serverUrl = app.dataStoreManager.serverUrlFlow.first()
+            report.append("• Configured Server URL: ").append(serverUrl).append("\n\n")
+
+            // Part 2: Stage States
+            report.append("[TEST MODE STAGES PIPELINE]\n")
+            DiagnosticsManager.stages.forEach { stage ->
+                report.append("Stage ${stage.number}: ${stage.name}\n")
+                report.append("  Status: ${stage.status}\n")
+                if (stage.status != "WAITING") {
+                    report.append("  Timestamp: ${stage.timestamp}\n")
+                    report.append("  Duration: ${stage.durationMs}ms\n")
+                    report.append("  Details: ${stage.details}\n")
+                    if (stage.exception != null) {
+                        report.append("  Exception: ${stage.exception}\n")
+                    }
+                }
+                report.append("\n")
+            }
+            report.append("\n")
+
+            // Part 3: SQLite Logs
+            report.append("[RECENT SYSTEM DATABASE LOGS (LAST 200)]\n")
+            val logs = withContext(Dispatchers.IO) {
+                logDbHelper.getAllLogs()
+            }
+            if (logs.isEmpty()) {
+                report.append("No database logs found.\n")
+            } else {
+                logs.forEach { log ->
+                    report.append("[${log.timestamp}] [${log.type}] ${log.message}\n")
+                }
+            }
+
+            // Share/Save log report
+            val sendIntent = Intent().apply {
+                action = Intent.ACTION_SEND
+                putExtra(Intent.EXTRA_TEXT, report.toString())
+                type = "text/plain"
+                putExtra(Intent.EXTRA_SUBJECT, "WhatsApp AI Assistant - Debug Report")
+            }
+
+            val shareIntent = Intent.createChooser(sendIntent, "Export Debug Report")
+            startActivity(shareIntent)
         }
     }
 }

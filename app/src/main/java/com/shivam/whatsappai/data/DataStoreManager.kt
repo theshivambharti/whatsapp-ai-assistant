@@ -22,6 +22,7 @@ class DataStoreManager(private val context: Context) {
         val HEADER_NAME_KEY = stringPreferencesKey("header_name")
         val HEADER_VALUE_KEY = stringPreferencesKey("header_value")
         val SERVICE_ACTIVE_KEY = booleanPreferencesKey("service_active")
+        val TEST_MODE_KEY = booleanPreferencesKey("test_mode")
     }
 
     val serverUrlFlow: Flow<String> = context.dataStore.data
@@ -32,7 +33,8 @@ class DataStoreManager(private val context: Context) {
                 throw exception
             }
         }.map { preferences ->
-            preferences[SERVER_URL_KEY] ?: ""
+            val url = preferences[SERVER_URL_KEY]
+            if (url.isNullOrBlank()) "https://bot.clickbaaz.com/webhook.php" else url
         }
 
     val headerNameFlow: Flow<String> = context.dataStore.data
@@ -68,6 +70,17 @@ class DataStoreManager(private val context: Context) {
             preferences[SERVICE_ACTIVE_KEY] ?: true
         }
 
+    val testModeFlow: Flow<Boolean> = context.dataStore.data
+        .catch { exception ->
+            if (exception is IOException) {
+                emit(emptyPreferences())
+            } else {
+                throw exception
+            }
+        }.map { preferences ->
+            preferences[TEST_MODE_KEY] ?: false
+        }
+
     suspend fun saveSettings(serverUrl: String, headerName: String, headerValue: String) {
         context.dataStore.edit { preferences ->
             preferences[SERVER_URL_KEY] = serverUrl
@@ -79,6 +92,12 @@ class DataStoreManager(private val context: Context) {
     suspend fun setServiceActive(active: Boolean) {
         context.dataStore.edit { preferences ->
             preferences[SERVICE_ACTIVE_KEY] = active
+        }
+    }
+
+    suspend fun setTestMode(active: Boolean) {
+        context.dataStore.edit { preferences ->
+            preferences[TEST_MODE_KEY] = active
         }
     }
 }

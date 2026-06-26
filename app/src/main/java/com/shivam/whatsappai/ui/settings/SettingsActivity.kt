@@ -56,6 +56,10 @@ class SettingsActivity : AppCompatActivity() {
                 viewModel.sendTestRequest()
             }
         }
+
+        binding.swTestMode.setOnCheckedChangeListener { _, isChecked ->
+            viewModel.setTestMode(isChecked)
+        }
     }
 
     private fun validateInputs(url: String): Boolean {
@@ -87,6 +91,12 @@ class SettingsActivity : AppCompatActivity() {
         viewModel.headerValue.observe(this) { value ->
             if (binding.etHeaderValue.text?.toString().isNullOrBlank() && !value.isNullOrBlank()) {
                 binding.etHeaderValue.setText(value)
+            }
+        }
+
+        viewModel.testMode.observe(this) { isChecked ->
+            if (binding.swTestMode.isChecked != isChecked) {
+                binding.swTestMode.isChecked = isChecked
             }
         }
 

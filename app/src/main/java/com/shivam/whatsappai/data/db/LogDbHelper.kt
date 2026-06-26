@@ -90,4 +90,57 @@ class LogDbHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, n
             e.printStackTrace()
         }
     }
+
+    fun getLastLogMessage(type: String): String {
+        var lastMsg = "None"
+        val selectQuery = "SELECT $KEY_TIMESTAMP, $KEY_MESSAGE FROM $TABLE_LOGS WHERE $KEY_TYPE = ? ORDER BY $KEY_ID DESC LIMIT 1"
+        try {
+            val db = this.readableDatabase
+            val cursor = db.rawQuery(selectQuery, arrayOf(type))
+            if (cursor.moveToFirst()) {
+                val timestamp = cursor.getString(0)
+                val message = cursor.getString(1)
+                lastMsg = "[$timestamp] $message"
+            }
+            cursor.close()
+            db.close()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return lastMsg
+    }
+
+    fun getLogCount(type: String): Int {
+        var count = 0
+        val selectQuery = "SELECT COUNT(*) FROM $TABLE_LOGS WHERE $KEY_TYPE = ?"
+        try {
+            val db = this.readableDatabase
+            val cursor = db.rawQuery(selectQuery, arrayOf(type))
+            if (cursor.moveToFirst()) {
+                count = cursor.getInt(0)
+            }
+            cursor.close()
+            db.close()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return count
+    }
+
+    fun getLogCountContaining(type: String, keyword: String): Int {
+        var count = 0
+        val selectQuery = "SELECT COUNT(*) FROM $TABLE_LOGS WHERE $KEY_TYPE = ? AND $KEY_MESSAGE LIKE ?"
+        try {
+            val db = this.readableDatabase
+            val cursor = db.rawQuery(selectQuery, arrayOf(type, "%$keyword%"))
+            if (cursor.moveToFirst()) {
+                count = cursor.getInt(0)
+            }
+            cursor.close()
+            db.close()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return count
+    }
 }

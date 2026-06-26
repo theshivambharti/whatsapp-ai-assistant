@@ -496,6 +496,42 @@
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
+            <!-- Connector Test Mode Stages Card -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card_test_mode_stages"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:visibility="gone"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="2dp"
+                app:strokeWidth="1dp"
+                app:strokeColor="@color/surface_variant">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Connector Test Mode Execution Pipeline"
+                        android:textColor="@color/on_surface"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="12dp" />
+
+                    <LinearLayout
+                        android:id="@+id/layout_stages_container"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical" />
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
             <!-- Self Test Button -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_run_self_test"
@@ -504,6 +540,18 @@
                 android:text="RUN COMPLETE SELF TEST"
                 android:textColor="@android:color/white"
                 android:backgroundTint="@color/primary"
+                android:textStyle="bold"
+                android:layout_marginBottom="12dp"
+                app:cornerRadius="12dp" />
+
+            <!-- Export Debug Log Button -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_export_debug_log"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:text="EXPORT DEBUG LOG"
+                android:textColor="@android:color/white"
+                android:backgroundTint="@color/secondary"
                 android:textStyle="bold"
                 android:layout_marginBottom="32dp"
                 app:cornerRadius="12dp" />

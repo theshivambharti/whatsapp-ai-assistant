@@ -21,25 +21,31 @@ object WhatsAppReplyManager {
 
     fun addPendingReply(context: Context, sender: String, reply: String, contentIntent: PendingIntent?) {
         val logger = (context.applicationContext as? WhatsAppAssistantApp)?.logDbHelper
-        
-        val key = sender.trim().lowercase()
-        replyQueue[key] = reply
-        fallbackReply = reply
-        
-        logger?.addLog("WEBHOOK_RES", "Response received for '$sender': '$reply'")
-
-        // Trigger opening of WhatsApp conversation window
-        if (contentIntent != null) {
-            try {
-                logger?.addLog("REPLY_SENT", "Opening WhatsApp conversation for '$sender'...")
-                contentIntent.send()
-            } catch (e: Exception) {
-                logger?.addLog("ERROR", "Failed to send contentIntent: ${e.message}. Launching WhatsApp directly.")
+        val startTime = System.currentTimeMillis()
+        try {
+            val key = sender.trim().lowercase()
+            replyQueue[key] = reply
+            fallbackReply = reply
+            
+            logger?.addLog("WEBHOOK_RES", "Reply stored successfully in queue for contact: '$sender'")
+            DiagnosticsManager.updateStageSuccess(6, "Reply saved to memory queue: key='$key', value='$reply'", System.currentTimeMillis() - startTime)
+            
+            // Trigger opening of WhatsApp conversation window
+            if (contentIntent != null) {
+                try {
+                    logger?.addLog("REPLY_SENT", "Opening WhatsApp conversation for '$sender'...")
+                    contentIntent.send()
+                } catch (e: Exception) {
+                    logger?.addLog("ERROR", "Failed to send contentIntent: ${e.message}. Launching WhatsApp directly.")
+                    launchWhatsAppDirectly(context)
+                }
+            } else {
+                logger?.addLog("REPLY_SENT", "No direct intent available. Launching WhatsApp directly.")
                 launchWhatsAppDirectly(context)
             }
-        } else {
-            logger?.addLog("REPLY_SENT", "No direct intent available. Launching WhatsApp directly.")
-            launchWhatsAppDirectly(context)
+        } catch (e: Exception) {
+            val duration = System.currentTimeMillis() - startTime
+            DiagnosticsManager.updateStageFailure(6, "Failed to store reply in queue: ${e.message}", e, duration)
         }
     }
 

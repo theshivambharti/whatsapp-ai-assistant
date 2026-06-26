@@ -22,6 +22,7 @@ class SettingsViewModel(
     val headerName: LiveData<String> = repository.headerName.asLiveData()
     val headerValue: LiveData<String> = repository.headerValue.asLiveData()
     val serviceActive: LiveData<Boolean> = repository.serviceActive.asLiveData()
+    val testMode: LiveData<Boolean> = repository.testMode.asLiveData()
 
     private val _testRequestState = MutableLiveData<TestRequestState>()
     val testRequestState: LiveData<TestRequestState> = _testRequestState
@@ -40,6 +41,12 @@ class SettingsViewModel(
         viewModelScope.launch {
             val current = serviceActive.value ?: true
             repository.setServiceActive(!current)
+        }
+    }
+
+    fun setTestMode(active: Boolean) {
+        viewModelScope.launch {
+            repository.setTestMode(active)
         }
     }
 

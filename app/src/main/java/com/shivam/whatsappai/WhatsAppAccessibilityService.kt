@@ -112,58 +112,98 @@ class WhatsAppAccessibilityService : AccessibilityService() {
         WhatsAppReplyManager.isSending = true
 
         val logger = (applicationContext as? WhatsAppAssistantApp)?.logDbHelper
+        logger?.addLog("REPLY_SENT", "Chat opened for contact: '$contactName'")
         logger?.addLog("REPLY_SENT", "Initiated reply sequence to '$contactName'. Waiting up to 5s for WhatsApp UI...")
+
+        val autoReplyStartTime = System.currentTimeMillis()
+        DiagnosticsManager.updateStageSuccess(7, "WhatsApp chat detected for contact '$contactName'", System.currentTimeMillis() - autoReplyStartTime)
 
         serviceScope.launch {
             var success = false
             val startTime = System.currentTimeMillis()
             val timeout = 5000L
+            var lastErrorMsg = "Timeout finding input field or typing text"
+            val lastException: Throwable? = null
 
             while (System.currentTimeMillis() - startTime < timeout) {
                 val rootNode = rootInActiveWindow
                 if (rootNode != null) {
                     val inputNode = findInputField(rootNode)
                     if (inputNode != null) {
+                        val inputTime = System.currentTimeMillis() - startTime
+                        DiagnosticsManager.updateStageSuccess(8, "Input field located in view tree hierarchy", inputTime)
+                        logger?.addLog("REPLY_SENT", "Input field found successfully")
+                        
                         // Type the message
                         val arguments = Bundle()
                         arguments.putCharSequence(AccessibilityNodeInfo.ACTION_ARGUMENT_SET_TEXT_CHARSEQUENCE, replyText)
                         val setSuccess = inputNode.performAction(AccessibilityNodeInfo.ACTION_SET_TEXT, arguments)
 
                         if (setSuccess) {
-                            logger?.addLog("REPLY_SENT", "Text typed successfully into input box.")
+                            val typeTime = System.currentTimeMillis() - startTime
+                            DiagnosticsManager.updateStageSuccess(9, "Set text reply action completed successfully", typeTime)
+                            logger?.addLog("REPLY_SENT", "Text typed into message box: '$replyText'")
                             
                             // Let's find the send button and click it
                             val sendButton = findSendButton(rootNode)
                             if (sendButton != null) {
+                                val sendButtonTime = System.currentTimeMillis() - startTime
+                                DiagnosticsManager.updateStageSuccess(10, "WhatsApp Send button successfully located", sendButtonTime)
+                                logger?.addLog("REPLY_SENT", "Send button found successfully")
+                                
                                 val clickSuccess = sendButton.performAction(AccessibilityNodeInfo.ACTION_CLICK)
                                 if (clickSuccess) {
-                                    val msg = "Auto-reply sent successfully to '$contactName': '$replyText'"
+                                    val duration = System.currentTimeMillis() - startTime
+                                    val msg = "Reply successfully sent to '$contactName'! (Execution time: ${duration}ms)"
                                     logger?.addLog("REPLY_SENT", msg)
                                     DiagnosticsManager.lastReplySent = "To: $contactName, Msg: $replyText"
+                                    
+                                    DiagnosticsManager.updateStageSuccess(11, "Send click performed successfully. Auto-reply completed", duration)
+                                    
                                     WhatsAppReplyManager.clearReplyForContact(contactName)
                                     success = true
                                     break
                                 } else {
+                                    lastErrorMsg = "Failed to click WhatsApp Send button using performAction(ACTION_CLICK)."
                                     logger?.addLog("ERROR", "Failed to click WhatsApp Send button. Retrying UI search...")
                                 }
                             } else {
+                                lastErrorMsg = "Could not locate WhatsApp Send button in current root node."
                                 logger?.addLog("ERROR", "Could not locate WhatsApp Send button. Retrying UI search...")
                             }
                         } else {
+                            lastErrorMsg = "Failed to set text on input field using SET_TEXT action."
                             logger?.addLog("ERROR", "Failed to type text using SET_TEXT action. Retrying...")
                         }
+                    } else {
+                        lastErrorMsg = "WhatsApp message input field not found in rootNode hierarchy."
                     }
+                } else {
+                    lastErrorMsg = "rootInActiveWindow is null"
                 }
                 delay(300) // retry loop delay
             }
 
             if (!success) {
-                val errMsg = "Failed to send auto-reply to '$contactName' after 5 seconds timeout"
+                val duration = System.currentTimeMillis() - startTime
+                val errMsg = "Failed to send auto-reply to '$contactName' after 5 seconds timeout: $lastErrorMsg"
                 logger?.addLog("ERROR", errMsg)
                 DiagnosticsManager.lastError = errMsg
+                val currentStage = getCurrentUnfinishedStage()
+                DiagnosticsManager.updateStageFailure(currentStage, lastErrorMsg, lastException, duration)
             }
             WhatsAppReplyManager.isSending = false
         }
+    }
+
+    private fun getCurrentUnfinishedStage(): Int {
+        for (i in 8..11) {
+            val stage = DiagnosticsManager.stages.find { it.number == i }
+            if (stage != null && stage.status == "WAITING") {
+                return i
+            }
+        }
+        return 11
     }
 
     private fun findInputField(rootNode: AccessibilityNodeInfo): AccessibilityNodeInfo? {
