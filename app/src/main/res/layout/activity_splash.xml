@@ -39,6 +39,50 @@
             android:fontFamily="sans-serif"
             android:gravity="center" />
 
+        <TextView
+            android:id="@+id/splash_version_info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:textColor="@android:color/white"
+            android:textSize="14sp"
+            android:gravity="center"
+            android:fontFamily="sans-serif"
+            android:text="Version 1.1.14 (16)" />
+
+        <TextView
+            android:id="@+id/splash_date_info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:textColor="@android:color/white"
+            android:textSize="14sp"
+            android:gravity="center"
+            android:fontFamily="sans-serif"
+            android:text="26 June 2026" />
+
+        <TextView
+            android:id="@+id/splash_commit_info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:textColor="@android:color/darker_gray"
+            android:textSize="12sp"
+            android:gravity="center"
+            android:fontFamily="sans-serif-monospace"
+            android:text="Git: d8f4e2c" />
+
+        <TextView
+            android:id="@+id/splash_developer_info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:textColor="@color/whatsapp_green"
+            android:textSize="14sp"
+            android:gravity="center"
+            android:fontFamily="sans-serif-medium"
+            android:text="Developer\nShivam Bharti" />
+
     </LinearLayout>
 
     <ProgressBar

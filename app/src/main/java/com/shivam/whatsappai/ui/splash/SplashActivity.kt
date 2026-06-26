@@ -19,6 +19,12 @@ class SplashActivity : AppCompatActivity() {
         binding = ActivitySplashBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        // Set values from VersionHistory dynamically
+        binding.splashVersionInfo.text = "Version ${com.shivam.whatsappai.ui.about.VersionHistory.CURRENT_VERSION_NAME} (${com.shivam.whatsappai.ui.about.VersionHistory.CURRENT_VERSION_CODE})"
+        binding.splashDateInfo.text = com.shivam.whatsappai.ui.about.VersionHistory.BUILD_DATE
+        binding.splashCommitInfo.text = "Git: ${com.shivam.whatsappai.ui.about.VersionHistory.GIT_COMMIT_HASH}"
+        binding.splashDeveloperInfo.text = "Developer\nShivam Bharti"
+
         // Delay for 2 seconds then navigate to Home Screen
         Handler(Looper.getMainLooper()).postDelayed({
             val intent = Intent(this@SplashActivity, MainActivity::class.java)

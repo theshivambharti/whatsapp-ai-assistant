@@ -47,6 +47,9 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        // Set version footer text dynamically
+        binding.tvHomeVersionFooter.text = "Version ${com.shivam.whatsappai.ui.about.VersionHistory.CURRENT_VERSION_NAME}\nBuild ${com.shivam.whatsappai.ui.about.VersionHistory.CURRENT_VERSION_CODE}"
+
         setupToolbar()
         setupListeners()
         observeViewModel()

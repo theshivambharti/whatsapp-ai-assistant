@@ -21,6 +21,14 @@ class SettingsActivity : AppCompatActivity() {
         binding = ActivitySettingsBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        // Set static Application Information fields
+        binding.tvSettingsAppVersion.text = "Version ${com.shivam.whatsappai.ui.about.VersionHistory.CURRENT_VERSION_NAME}"
+        binding.tvSettingsVersionCode.text = com.shivam.whatsappai.ui.about.VersionHistory.CURRENT_VERSION_CODE.toString()
+        binding.tvSettingsBuildDate.text = com.shivam.whatsappai.ui.about.VersionHistory.BUILD_DATE
+        binding.tvSettingsTargetSdk.text = "34"
+        binding.tvSettingsMinSdk.text = "26"
+        binding.tvSettingsDeveloper.text = "Shivam Bharti"
+
         setupToolbar()
         setupListeners()
         observeViewModel()
@@ -79,6 +87,17 @@ class SettingsActivity : AppCompatActivity() {
         viewModel.serverUrl.observe(this) { url ->
             if (binding.etServerUrl.text?.toString().isNullOrBlank() && !url.isNullOrBlank()) {
                 binding.etServerUrl.setText(url)
+            }
+            binding.tvSettingsWebhookUrl.text = if (url.isNullOrBlank()) "Not Configured" else url
+        }
+
+        viewModel.serviceActive.observe(this) { isActive ->
+            if (isActive) {
+                binding.tvSettingsConnectorStatus.text = "Active"
+                binding.tvSettingsConnectorStatus.setTextColor(androidx.core.content.ContextCompat.getColor(this, R.color.primary))
+            } else {
+                binding.tvSettingsConnectorStatus.text = "Inactive"
+                binding.tvSettingsConnectorStatus.setTextColor(androidx.core.content.ContextCompat.getColor(this, R.color.error))
             }
         }
 
