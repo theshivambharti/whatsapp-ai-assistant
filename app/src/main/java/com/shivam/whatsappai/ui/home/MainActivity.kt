@@ -1,11 +1,15 @@
 package com.shivam.whatsappai.ui.home
 
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.content.res.ColorStateList
 import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -25,6 +29,17 @@ class MainActivity : AppCompatActivity() {
         SettingsViewModelFactory(application)
     }
 
+    private val requestNotificationPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        if (isGranted) {
+            Toast.makeText(this, "Notification permission granted", Toast.LENGTH_SHORT).show()
+        } else {
+            Toast.makeText(this, "Notification permission denied", Toast.LENGTH_SHORT).show()
+        }
+        checkPermissionsAndStatuses()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -33,6 +48,13 @@ class MainActivity : AppCompatActivity() {
         setupToolbar()
         setupListeners()
         observeViewModel()
+
+        // Request POST_NOTIFICATIONS on Android 13+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                requestNotificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+            }
+        }
     }
 
     override fun onResume() {
@@ -126,19 +148,19 @@ class MainActivity : AppCompatActivity() {
 
         // Update Notification Access UI
         if (notiEnabled) {
-            binding.tvStatusNotification.text = getString(R.string.status_enabled)
+            binding.tvStatusNotification.text = "Granted"
             binding.tvStatusNotification.setTextColor(ContextCompat.getColor(this, R.color.primary))
         } else {
-            binding.tvStatusNotification.text = getString(R.string.status_disabled)
+            binding.tvStatusNotification.text = "Not Granted"
             binding.tvStatusNotification.setTextColor(ContextCompat.getColor(this, R.color.error))
         }
 
         // Update Accessibility Service UI
         if (accessEnabled) {
-            binding.tvStatusAccessibility.text = getString(R.string.status_enabled)
+            binding.tvStatusAccessibility.text = "Granted"
             binding.tvStatusAccessibility.setTextColor(ContextCompat.getColor(this, R.color.primary))
         } else {
-            binding.tvStatusAccessibility.text = getString(R.string.status_disabled)
+            binding.tvStatusAccessibility.text = "Not Granted"
             binding.tvStatusAccessibility.setTextColor(ContextCompat.getColor(this, R.color.error))
         }
 
@@ -165,7 +187,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun isNotificationAccessEnabled(): Boolean {
-        val enabledListeners = Settings.Secure.getString(contentResolver, "enabled_notification_listeners")
+        val enabledListeners = Settings.Secure.getString(contentResolver, Settings.Secure.ENABLED_NOTIFICATION_LISTENERS)
         val packageName = packageName
         return !enabledListeners.isNullOrBlank() && enabledListeners.contains(packageName)
     }
@@ -191,7 +213,7 @@ class MainActivity : AppCompatActivity() {
             .setTitle(R.string.dialog_noti_access_title)
             .setMessage(R.string.dialog_noti_access_desc)
             .setPositiveButton("Open Settings") { _, _ ->
-                val intent = Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS")
+                val intent = Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS)
                 startActivity(intent)
             }
             .setNegativeButton("Cancel", null)

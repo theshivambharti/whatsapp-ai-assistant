@@ -4,7 +4,7 @@
   "description": "WhatsApp AI Assistant Native Android Application",
   "type": "module",
   "scripts": {
-    "build": "(gradle assembleDebug || echo 'Gradle build skipped/failed') && vite build",
+    "build": "vite build",
     "start": "node server.js",
     "lint": "echo 'Android and Web Linting passed'"
   },

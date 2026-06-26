@@ -13,7 +13,7 @@
     <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
 
     <application
-        android:name=".WhatsAppAssistantApp"
+        android:name="com.shivam.whatsappai.WhatsAppAssistantApp"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -24,7 +24,7 @@
 
         <!-- Splash Screen Activity -->
         <activity
-            android:name=".ui.splash.SplashActivity"
+            android:name="com.shivam.whatsappai.ui.splash.SplashActivity"
             android:exported="true"
             android:theme="@style/Theme.WhatsAppAIAssistant.Splash">
             <intent-filter>
@@ -35,50 +35,49 @@
 
         <!-- Home Screen Activity -->
         <activity
-            android:name=".ui.home.MainActivity"
+            android:name="com.shivam.whatsappai.ui.home.MainActivity"
             android:exported="false"
             android:label="@string/title_home" />
 
         <!-- Settings Screen Activity -->
         <activity
-            android:name=".ui.settings.SettingsActivity"
+            android:name="com.shivam.whatsappai.ui.settings.SettingsActivity"
             android:exported="false"
             android:label="@string/title_settings"
-            android:parentActivityName=".ui.home.MainActivity">
+            android:parentActivityName="com.shivam.whatsappai.ui.home.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ui.home.MainActivity" />
+                android:value="com.shivam.whatsappai.ui.home.MainActivity" />
         </activity>
 
         <!-- Service & Webhook Logs Screen Activity -->
         <activity
-            android:name=".ui.logs.LogsActivity"
+            android:name="com.shivam.whatsappai.ui.logs.LogsActivity"
             android:exported="false"
             android:label="Logs"
-            android:parentActivityName=".ui.home.MainActivity">
+            android:parentActivityName="com.shivam.whatsappai.ui.home.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ui.home.MainActivity" />
+                android:value="com.shivam.whatsappai.ui.home.MainActivity" />
         </activity>
 
         <!-- Diagnostics Screen Activity -->
         <activity
-            android:name=".ui.diagnostics.DiagnosticsActivity"
+            android:name="com.shivam.whatsappai.ui.diagnostics.DiagnosticsActivity"
             android:exported="false"
             android:label="Diagnostics"
-            android:parentActivityName=".ui.home.MainActivity">
+            android:parentActivityName="com.shivam.whatsappai.ui.home.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ui.home.MainActivity" />
+                android:value="com.shivam.whatsappai.ui.home.MainActivity" />
         </activity>
 
         <!-- Notification Listener Service -->
         <service
-            android:name=".WhatsAppNotificationListenerService"
+            android:name="com.shivam.whatsappai.WhatsAppNotificationListenerService"
             android:exported="true"
             android:label="WhatsApp AI Notification Listener"
-            android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE"
-            android:foregroundServiceType="dataSync">
+            android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
             <intent-filter>
                 <action android:name="android.service.notification.NotificationListenerService" />
             </intent-filter>
@@ -86,7 +85,7 @@
 
         <!-- Accessibility Interaction Service -->
         <service
-            android:name=".WhatsAppAccessibilityService"
+            android:name="com.shivam.whatsappai.WhatsAppAccessibilityService"
             android:exported="true"
             android:label="WhatsApp AI Auto-Responder Service"
             android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">

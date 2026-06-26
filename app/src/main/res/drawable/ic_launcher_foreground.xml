@@ -5,38 +5,107 @@
     android:viewportWidth="108"
     android:viewportHeight="108">
     
-    <!-- White Chat Bubble Base -->
+    <!-- Deep Green Soft Ambient Glow behind the chat bubble -->
     <path
-        android:fillColor="#FFFFFF"
-        android:pathData="M 34,30 C 30.68,30 28,32.68 28,36 L 28,64 C 28,67.32 30.68,70 34,70 L 42,70 L 36,78 L 48,70 L 74,70 C 77.32,70 80,67.32 80,64 L 80,36 C 80,32.68 77.32,30 74,30 Z" />
+        android:fillColor="#0f4231"
+        android:pathData="M 54,16 C 73.88,16 90,32.12 90,52 C 90,71.88 73.88,88 54,88 C 34.12,88 18,71.88 18,52 C 18,32.12 34.12,16 54,16 Z" />
 
-    <!-- AI/Robot Face details in WhatsApp Green (#00a884) inside bubble -->
-    <!-- Left Eye -->
-    <path
-        android:fillColor="#00a884"
-        android:pathData="M 44,46 C 41.8,46 40,47.8 40,50 C 40,52.2 41.8,54 44,54 C 46.2,54 48,52.2 48,50 C 48,47.8 46.2,46 44,46 Z" />
-
-    <!-- Right Eye -->
-    <path
-        android:fillColor="#00a884"
-        android:pathData="M 64,46 C 61.8,46 60,47.8 60,50 C 60,52.2 61.8,54 64,54 C 66.2,54 68,52.2 68,50 C 68,47.8 66.2,46 64,46 Z" />
-
-    <!-- Robot Mouth / Circuit line -->
-    <path
-        android:strokeColor="#00a884"
-        android:strokeWidth="3"
-        android:strokeLineCap="round"
-        android:pathData="M 46,60 L 62,60" />
-
-    <!-- Antenna stem -->
+    <!-- 1. Beautiful circular speech bubble with bottom-left pointer (Thick White Stroke) -->
     <path
         android:strokeColor="#FFFFFF"
-        android:strokeWidth="3.5"
+        android:strokeWidth="4"
         android:strokeLineCap="round"
-        android:pathData="M 54,30 L 54,20" />
+        android:strokeLineJoin="round"
+        android:pathData="M 54,20 C 71.67,20 86,34.33 86,52 C 86,69.67 71.67,84 54,84 C 47.5,84 41.5,82.1 36.4,78.8 L 22,83 L 26.2,68.6 C 22.9,63.5 21,57.5 21,52 C 21,34.33 35.33,20 54,20 Z" />
 
-    <!-- Antenna bulb -->
+    <!-- 2. Circuit Traces & Terminals at the bottom of the bubble -->
+    <!-- Center trace -->
     <path
-        android:fillColor="#25d366"
-        android:pathData="M 54,19 C 55.65,19 57,17.65 57,16 C 57,14.35 55.65,13 54,13 C 52.35,13 51,14.35 51,16 C 51,17.65 52.35,19 54,19 Z" />
+        android:strokeColor="#00ffaa"
+        android:strokeWidth="2"
+        android:strokeLineCap="round"
+        android:pathData="M 54,58 L 54,75" />
+    <path
+        android:fillColor="#00ffaa"
+        android:pathData="M 54,77 m -2,0 a 2,2 0 1,1 4,0 a 2,2 0 1,1 -4,0" />
+
+    <!-- Left trace -->
+    <path
+        android:strokeColor="#00ffaa"
+        android:strokeWidth="2"
+        android:strokeLineCap="round"
+        android:pathData="M 46,58 L 46,65 L 38,71" />
+    <path
+        android:fillColor="#00ffaa"
+        android:pathData="M 38,71 m -2,0 a 2,2 0 1,1 4,0 a 2,2 0 1,1 -4,0" />
+
+    <!-- Right trace -->
+    <path
+        android:strokeColor="#00ffaa"
+        android:strokeWidth="2"
+        android:strokeLineCap="round"
+        android:pathData="M 62,58 L 62,65 L 70,71" />
+    <path
+        android:fillColor="#00ffaa"
+        android:pathData="M 70,71 m -2,0 a 2,2 0 1,1 4,0 a 2,2 0 1,1 -4,0" />
+
+    <!-- 3. Robot Head (rounded rectangle with a glowing green border) -->
+    <path
+        android:fillColor="#06100c"
+        android:strokeColor="#00ffaa"
+        android:strokeWidth="3"
+        android:strokeLineJoin="round"
+        android:pathData="M 46,38 H 62 C 66.4,38 70,41.6 70,46 V 50 C 70,54.4 66.4,58 62,58 H 46 C 41.6,58 38,54.4 38,50 V 46 C 38,41.6 41.6,38 46,38 Z" />
+
+    <!-- Headphones/Ears on the sides of the head -->
+    <!-- Left headphone -->
+    <path
+        android:fillColor="#00ffaa"
+        android:pathData="M 38,44 C 36,44 35,45.5 35,48 C 35,50.5 36,52 38,52 Z" />
+    <!-- Right headphone -->
+    <path
+        android:fillColor="#00ffaa"
+        android:pathData="M 70,44 C 72,44 73,45.5 73,48 C 73,50.5 72,52 70,52 Z" />
+
+    <!-- Antenna Stem -->
+    <path
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="2.5"
+        android:strokeLineCap="round"
+        android:pathData="M 54,38 L 54,30" />
+    <!-- Antenna Bulb -->
+    <path
+        android:fillColor="#00ffaa"
+        android:pathData="M 54,29 m -2.5,0 a 2.5,2.5 0 1,1 5,0 a 2.5,2.5 0 1,1 -5,0" />
+
+    <!-- Happy Smiling Curved Eyes (Arcs) -->
+    <!-- Left Eye -->
+    <path
+        android:strokeColor="#00ffaa"
+        android:strokeWidth="2.5"
+        android:strokeLineCap="round"
+        android:pathData="M 44,48 Q 46.5,45 49,48" />
+    <!-- Right Eye -->
+    <path
+        android:strokeColor="#00ffaa"
+        android:strokeWidth="2.5"
+        android:strokeLineCap="round"
+        android:pathData="M 59,48 Q 61.5,45 64,48" />
+
+    <!-- Smiling Mouth -->
+    <path
+        android:strokeColor="#00ffaa"
+        android:strokeWidth="2.5"
+        android:strokeLineCap="round"
+        android:pathData="M 50,53 Q 54,56 58,53" />
+
+    <!-- 4. Two Beautiful 4-Point Glowing Green Stars (Sparkles) in the top-right -->
+    <!-- Large Star -->
+    <path
+        android:fillColor="#00ffcc"
+        android:pathData="M 81,15 Q 81,23 89,23 Q 81,23 81,31 Q 81,23 73,23 Q 81,23 81,15 Z" />
+    <!-- Small Star -->
+    <path
+        android:fillColor="#00ffcc"
+        android:pathData="M 92,26 Q 92,31 97,31 Q 92,31 92,36 Q 92,31 87,31 Q 92,31 92,26 Z" />
 </vector>

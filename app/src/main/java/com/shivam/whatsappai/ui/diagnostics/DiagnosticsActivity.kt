@@ -71,7 +71,7 @@ class DiagnosticsActivity : AppCompatActivity() {
 
     private fun setupListeners() {
         binding.btnFixNotiAccess.setOnClickListener {
-            val intent = Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS")
+            val intent = Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS)
             startActivity(intent)
         }
 
@@ -116,12 +116,12 @@ class DiagnosticsActivity : AppCompatActivity() {
         // 1. Notification Access
         val notiAccessEnabled = isNotificationAccessEnabled()
         if (notiAccessEnabled) {
-            binding.tvPermNotiStatus.text = "PASS"
+            binding.tvPermNotiStatus.text = "Granted"
             binding.tvPermNotiStatus.setTextColor(ContextCompat.getColor(this, R.color.primary))
             binding.btnFixNotiAccess.isEnabled = false
             binding.btnFixNotiAccess.text = "OK"
         } else {
-            binding.tvPermNotiStatus.text = "FAIL"
+            binding.tvPermNotiStatus.text = "Not Granted"
             binding.tvPermNotiStatus.setTextColor(ContextCompat.getColor(this, R.color.error))
             binding.btnFixNotiAccess.isEnabled = true
             binding.btnFixNotiAccess.text = "FIX"
@@ -130,12 +130,12 @@ class DiagnosticsActivity : AppCompatActivity() {
         // 2. Accessibility
         val accessibilityEnabled = isAccessibilityServiceEnabled()
         if (accessibilityEnabled) {
-            binding.tvPermAccessStatus.text = "PASS"
+            binding.tvPermAccessStatus.text = "Granted"
             binding.tvPermAccessStatus.setTextColor(ContextCompat.getColor(this, R.color.primary))
             binding.btnFixAccessibility.isEnabled = false
             binding.btnFixAccessibility.text = "OK"
         } else {
-            binding.tvPermAccessStatus.text = "FAIL"
+            binding.tvPermAccessStatus.text = "Not Granted"
             binding.tvPermAccessStatus.setTextColor(ContextCompat.getColor(this, R.color.error))
             binding.btnFixAccessibility.isEnabled = true
             binding.btnFixAccessibility.text = "FIX"
@@ -148,12 +148,12 @@ class DiagnosticsActivity : AppCompatActivity() {
             true
         }
         if (postNotificationsEnabled) {
-            binding.tvPermPostStatus.text = "PASS"
+            binding.tvPermPostStatus.text = "Granted"
             binding.tvPermPostStatus.setTextColor(ContextCompat.getColor(this, R.color.primary))
             binding.btnFixPostNotifications.isEnabled = false
             binding.btnFixPostNotifications.text = "OK"
         } else {
-            binding.tvPermPostStatus.text = "FAIL"
+            binding.tvPermPostStatus.text = "Not Granted"
             binding.tvPermPostStatus.setTextColor(ContextCompat.getColor(this, R.color.error))
             binding.btnFixPostNotifications.isEnabled = true
             binding.btnFixPostNotifications.text = "FIX"
@@ -167,12 +167,12 @@ class DiagnosticsActivity : AppCompatActivity() {
             true
         }
         if (isIgnoringBattery) {
-            binding.tvPermBatteryStatus.text = "PASS"
+            binding.tvPermBatteryStatus.text = "Granted"
             binding.tvPermBatteryStatus.setTextColor(ContextCompat.getColor(this, R.color.primary))
             binding.btnFixBattery.isEnabled = false
             binding.btnFixBattery.text = "OK"
         } else {
-            binding.tvPermBatteryStatus.text = "FAIL"
+            binding.tvPermBatteryStatus.text = "Not Granted"
             binding.tvPermBatteryStatus.setTextColor(ContextCompat.getColor(this, R.color.error))
             binding.btnFixBattery.isEnabled = true
             binding.btnFixBattery.text = "FIX"
@@ -208,7 +208,7 @@ class DiagnosticsActivity : AppCompatActivity() {
     }
 
     private fun isNotificationAccessEnabled(): Boolean {
-        val enabledListeners = Settings.Secure.getString(contentResolver, "enabled_notification_listeners")
+        val enabledListeners = Settings.Secure.getString(contentResolver, Settings.Secure.ENABLED_NOTIFICATION_LISTENERS)
         return !enabledListeners.isNullOrBlank() && enabledListeners.contains(packageName)
     }
 
