@@ -23,7 +23,7 @@ class SplashActivity : AppCompatActivity() {
         binding.splashVersionInfo.text = "Version ${com.shivam.whatsappai.ui.about.VersionHistory.CURRENT_VERSION_NAME} (${com.shivam.whatsappai.ui.about.VersionHistory.CURRENT_VERSION_CODE})"
         binding.splashDateInfo.text = com.shivam.whatsappai.ui.about.VersionHistory.BUILD_DATE
         binding.splashCommitInfo.text = "Git: ${com.shivam.whatsappai.ui.about.VersionHistory.GIT_COMMIT_HASH}"
-        binding.splashDeveloperInfo.text = "Developer\nShivam Bharti"
+        binding.splashDeveloperInfo.text = "Developer\nShivam Bharti\n\nUUID: ${com.shivam.whatsappai.BuildInfo.BUILD_UUID}"
 
         // Delay for 2 seconds then navigate to Home Screen
         Handler(Looper.getMainLooper()).postDelayed({

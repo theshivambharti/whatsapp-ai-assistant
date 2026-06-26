@@ -12,7 +12,7 @@ android {
         minSdk = 26
         targetSdk = 34
         versionCode = 16
-        versionName = "1.1.14"
+        versionName = "1.1.14" // Trigger build update
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

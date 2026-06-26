@@ -464,4 +464,17 @@
             android:text="Version 1.1.14\nBuild 16" />
     </LinearLayout>
 
+    <!-- Floating Build Info Button -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_build_info"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="16dp"
+        android:layout_marginBottom="72dp"
+        android:contentDescription="Build Info"
+        app:srcCompat="@android:drawable/ic_dialog_info"
+        app:tint="@android:color/white"
+        app:backgroundTint="@color/primary" />
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

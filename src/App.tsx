@@ -169,6 +169,7 @@ export default function App() {
     isSuccess: boolean;
   } | null>(null);
   const [showResultDialog, setShowResultDialog] = useState(false);
+  const [showBuildGuide, setShowBuildGuide] = useState(false);
 
   // Pipeline execution state
   const [pipelineRunning, setPipelineRunning] = useState(false);
@@ -362,13 +363,13 @@ export default function App() {
           </div>
           
           <div className="flex items-center gap-3">
-            <a 
-              href="/download-apk" 
-              className="flex items-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-semibold px-5 py-2.5 rounded-xl transition shadow-lg shadow-emerald-500/10 text-sm"
+            <button 
+              onClick={() => setShowBuildGuide(true)}
+              className="flex items-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-semibold px-5 py-2.5 rounded-xl transition shadow-lg shadow-emerald-500/10 text-sm cursor-pointer border-0"
             >
               <Download className="w-4 h-4" />
               Download Android APK
-            </a>
+            </button>
           </div>
         </div>
       </header>
@@ -1039,12 +1040,107 @@ export default function App() {
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
           <p>© 2026 WhatsApp AI Assistant. All rights reserved.</p>
           <div className="flex gap-4">
-            <a href="/download-apk" className="hover:text-white transition">Download APK</a>
+            <button 
+              onClick={() => setShowBuildGuide(true)} 
+              className="hover:text-white transition cursor-pointer bg-transparent border-0 p-0 text-slate-500 text-xs font-normal"
+            >
+              Download APK
+            </button>
             <span className="text-slate-800">|</span>
             <span className="text-slate-400">Kotlin Native MVVM Architecture</span>
           </div>
         </div>
       </footer>
+
+      {/* BUILD AND COMPILATION GUIDE MODAL */}
+      {showBuildGuide && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/85 backdrop-blur-md p-4 transition-all duration-300">
+          <div className="bg-slate-900 border border-slate-800 rounded-3xl max-w-lg w-full overflow-hidden shadow-2xl relative animate-in fade-in zoom-in-95 duration-200">
+            {/* Header branding */}
+            <div className="bg-gradient-to-r from-emerald-500/10 to-emerald-500/0 px-6 py-5 border-b border-slate-800 flex justify-between items-center">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-emerald-500/10 text-emerald-400 rounded-xl border border-emerald-500/20">
+                  <Smartphone className="w-5 h-5" />
+                </div>
+                <div className="text-left">
+                  <h3 className="text-sm font-bold text-white">APK Compilation Guide</h3>
+                  <p className="text-[11px] text-slate-400">WhatsApp AI Assistant v1.1.14 (Build 16)</p>
+                </div>
+              </div>
+              <button 
+                onClick={() => setShowBuildGuide(false)}
+                className="text-slate-400 hover:text-white hover:bg-slate-800 px-2 py-1 rounded-lg transition text-lg font-bold border-0 bg-transparent cursor-pointer"
+              >
+                &times;
+              </button>
+            </div>
+
+            {/* Content body */}
+            <div className="p-6 space-y-5 text-left">
+              <div className="bg-slate-950 p-4 rounded-2xl border border-slate-800 space-y-2">
+                <div className="flex items-start gap-2.5">
+                  <Info className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                  <p className="text-xs text-slate-300 leading-relaxed">
+                    This interactive workspace contains both a <strong>React Web Simulator</strong> and the <strong>Native Kotlin Android codebase</strong>.
+                  </p>
+                </div>
+                <p className="text-[11px] text-slate-400 leading-relaxed pl-6.5">
+                  Because this development environment compiles only the web application inside Node.js, direct downloads supply a <strong>precompiled baseline APK build</strong>.
+                </p>
+                <p className="text-[11px] text-emerald-400/90 font-medium leading-relaxed pl-6.5">
+                  To test your latest custom code, layout adjustments, and pre-configured webhook URLs on a physical device, please compile the app locally:
+                </p>
+              </div>
+
+              {/* Step by step */}
+              <div className="space-y-3">
+                <h4 className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">How to Compile the Latest APK:</h4>
+                
+                <div className="space-y-2.5">
+                  <div className="flex gap-3">
+                    <div className="w-5 h-5 rounded-full bg-slate-800 border border-slate-700 text-slate-300 font-mono text-[10px] font-bold flex items-center justify-center shrink-0">1</div>
+                    <p className="text-xs text-slate-300 leading-relaxed">
+                      <strong>Export Project Source:</strong> Click the settings/menu gear icon in the top right of AI Studio, and select <strong>Export to ZIP</strong> or <strong>Export to GitHub</strong>.
+                    </p>
+                  </div>
+
+                  <div className="flex gap-3">
+                    <div className="w-5 h-5 rounded-full bg-slate-800 border border-slate-700 text-slate-300 font-mono text-[10px] font-bold flex items-center justify-center shrink-0">2</div>
+                    <p className="text-xs text-slate-300 leading-relaxed">
+                      <strong>Open in Android Studio:</strong> Unzip and open the project directory in Android Studio. It automatically synchronizes the Gradle wrapper and dependencies.
+                    </p>
+                  </div>
+
+                  <div className="flex gap-3">
+                    <div className="w-5 h-5 rounded-full bg-slate-800 border border-slate-700 text-slate-300 font-mono text-[10px] font-bold flex items-center justify-center shrink-0">3</div>
+                    <p className="text-xs text-slate-300 leading-relaxed">
+                      <strong>Generate APK:</strong> Go to <strong>Build &gt; Build Bundle(s) / APK(s) &gt; Build APK(s)</strong> or run <code>./gradlew assembleDebug</code> in the local terminal. Your fully customized, compiled APK will be ready instantly!
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Footer buttons */}
+            <div className="bg-slate-950 px-6 py-4 border-t border-slate-800 flex flex-col sm:flex-row gap-3 justify-between items-center">
+              <a 
+                href="/download-apk"
+                className="w-full sm:w-auto flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-700 text-white font-semibold px-4 py-2 rounded-xl text-xs transition border border-slate-700 no-underline"
+                onClick={() => setShowBuildGuide(false)}
+              >
+                <Download className="w-3.5 h-3.5 text-emerald-400" />
+                Download Baseline APK anyway
+              </a>
+              <button 
+                onClick={() => setShowBuildGuide(false)}
+                className="w-full sm:w-auto bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold px-5 py-2 rounded-xl text-xs transition border-0 cursor-pointer"
+              >
+                Got it, thanks!
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>
   );
