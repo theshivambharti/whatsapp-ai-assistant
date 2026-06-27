@@ -19,9 +19,15 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
+      # This action sets up Gradle and provides a wrapper for you
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
 
+      # Now we generate the wrapper files (they will be created locally)
+      - name: Generate Gradle Wrapper
+        run: gradle wrapper
+
+      # Now build the APK using the newly created wrapper
       - name: Build debug APK
         run: ./gradlew assembleDebug
 
