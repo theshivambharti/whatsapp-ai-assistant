@@ -55,7 +55,7 @@ class AboutActivity : AppCompatActivity() {
 
     private fun loadStaticSpecs() {
         // App version specs
-        binding.tvAppVersionHeader.text = "v${VersionHistory.CURRENT_VERSION_NAME} (Build ${VersionHistory.CURRENT_VERSION_CODE})\nUUID: ${com.shivam.whatsappai.BuildInfo.BUILD_UUID}"
+        binding.tvAppVersionHeader.text = "v${VersionHistory.CURRENT_VERSION_NAME} (Build ${VersionHistory.CURRENT_VERSION_CODE})"
         binding.tvSpecBuildDate.text = VersionHistory.BUILD_DATE
         binding.tvSpecCommitHash.text = "${VersionHistory.GIT_COMMIT_HASH} (Local Build)"
 

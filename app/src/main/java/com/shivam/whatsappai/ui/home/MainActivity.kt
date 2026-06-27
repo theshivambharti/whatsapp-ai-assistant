@@ -47,15 +47,12 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Set version footer text dynamically with Build UUID
-        binding.tvHomeVersionFooter.text = "Version ${com.shivam.whatsappai.ui.about.VersionHistory.CURRENT_VERSION_NAME} (Build ${com.shivam.whatsappai.ui.about.VersionHistory.CURRENT_VERSION_CODE})\nUUID: ${com.shivam.whatsappai.BuildInfo.BUILD_UUID}"
+        // Set version footer text dynamically
+        binding.tvHomeVersionFooter.text = "Version ${com.shivam.whatsappai.ui.about.VersionHistory.CURRENT_VERSION_NAME}\nBuild ${com.shivam.whatsappai.ui.about.VersionHistory.CURRENT_VERSION_CODE}"
 
         setupToolbar()
         setupListeners()
         observeViewModel()
-
-        // Show Build Verified Dialog immediately after app launch
-        showBuildVerifiedDialog()
 
         // Request POST_NOTIFICATIONS on Android 13+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -97,28 +94,6 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        binding.fabBuildInfo.setOnClickListener {
-            val intent = Intent(this, com.shivam.whatsappai.ui.build.BuildVerificationActivity::class.java)
-            startActivity(intent)
-        }
-    }
-
-    private fun showBuildVerifiedDialog() {
-        AlertDialog.Builder(this)
-            .setTitle("Build Verified")
-            .setMessage(
-                "Version: ${com.shivam.whatsappai.BuildInfo.VERSION_NAME}\n" +
-                "Build: ${com.shivam.whatsappai.BuildInfo.VERSION_CODE}\n" +
-                "Build UUID: ${com.shivam.whatsappai.BuildInfo.BUILD_UUID}\n" +
-                "Git Commit: ${com.shivam.whatsappai.BuildInfo.GIT_COMMIT_HASH}\n" +
-                "Build Timestamp: ${com.shivam.whatsappai.BuildInfo.BUILD_TIMESTAMP}"
-            )
-            .setPositiveButton("OK", null)
-            .setNeutralButton("View Details") { _, _ ->
-                val intent = Intent(this, com.shivam.whatsappai.ui.build.BuildVerificationActivity::class.java)
-                startActivity(intent)
-            }
-            .show()
     }
 
     private fun navigateToSettings() {
