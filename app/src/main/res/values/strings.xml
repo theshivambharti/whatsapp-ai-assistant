@@ -34,6 +34,7 @@
     
     <!-- Accessibility and Status Strings -->
     <string name="accessibility_service_desc">WhatsApp AI Auto-Responder Service. Detects incoming chat windows to type and send responses automatically.</string>
+    <string name="accessibility_service_description">Allows the app to automatically type replies in WhatsApp.</string>
     <string name="label_notification_access">Notification Access</string>
     <string name="label_accessibility_service">Accessibility Service</string>
     <string name="label_webhook_status">Webhook Connection</string>
