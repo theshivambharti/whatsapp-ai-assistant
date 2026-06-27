@@ -19,16 +19,8 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Create Gradle cache directory
-        run: |
-          mkdir -p .gradle/buildOutputCleanup
-          echo "#" > .gradle/buildOutputCleanup/cache.properties
-
-      - name: Install Gradle
-        run: sudo apt-get update && sudo apt-get install gradle -y
-
-      - name: Generate Gradle Wrapper
-        run: gradle wrapper
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
 
       - name: Build debug APK
         run: ./gradlew assembleDebug
