@@ -19,5 +19,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "WhatsApp AI Assistant"
+rootProject.name = "whatsapp-ai-assistant"
 include(":app")
